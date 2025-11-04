@@ -1,29 +1,30 @@
 ```mermaid
 graph TD
     subgraph LAN [Red Local]
-        subgraph VLAN_10 [VLAN 10: Departamento A]
-            PC_A[PC A 192.168.10.10] --- Switch_Port_F1  <-- ¡Revisar esta línea!
+        subgraph VLAN_10 [VLAN 10: Dept A]
+            PCA[PC A 192.168.10.10] --- F1_10(F1 Access VLAN 10)
         end
 
-        subgraph VLAN_20 [VLAN 20: Departamento B]
-            PC_B[PC B 192.168.20.10] --- Switch_Port_F2
+        subgraph VLAN_20 [VLAN 20: Dept B]
+            PCB[PC B 192.168.20.10] --- F2_20(F2 Access VLAN 20)
         end
 
         subgraph VLAN_30 [VLAN 30: Servidores]
-            SERVER[Servidor 192.168.30.10] --- Switch_Port_F3
+            SERVER[Servidor 192.168.30.10] --- F3_30(F3 Access VLAN 30)
         end
+        
+        % Conexiones internas al Switch L2
+        F1_10 --- SW(Switch L2)
+        F2_20 --- SW
+        F3_30 --- SW
 
-        Switch_Port_F1[F1 (Access VLAN 10)] --- Switch(Switch L2)
-        Switch_Port_F2[F2 (Access VLAN 20)] --- Switch
-        Switch_Port_F3[F3 (Access VLAN 30)] --- Switch
-
-        Switch --- |"**F4 (Trunk)** Etiquetado 802.1Q"| Router(Router)
+        SW --- |"F4 Trunk (802.1Q)"| Router(Router)
     end
 
-    Router --- |"**GigabitEthernet0/1**"| INTERNET[Internet]
+    Router --- |"GigabitEthernet0/1"| INTERNET[Internet]
 
-    subgraph Router_Subinterfaces [Router: Interfaz Física G0/1]
-        Router_G0_1_10["G0/1.10 (Encapsulación 802.1Q 10) -> GW: 192.168.10.1"] --- Router
-        Router_G0_1_20["G0/1.20 (Encapsulación 802.1Q 20) -> GW: 192.168.20.1"] --- Router
-        Router_G0_1_30["G0/1.30 (Encapsulación 802.1Q 30) -> GW: 192.168.30.1"] --- Router
+    subgraph Router_Subinterfaces [Router Subinterfaces]
+        G0_1_10["G0/1.10 (GW: 192.168.10.1)"] --- Router
+        G0_1_20["G0/1.20 (GW: 192.168.20.1)"] --- Router
+        G0_1_30["G0/1.30 (GW: 192.168.30.1)"] --- Router
     end
